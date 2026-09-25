@@ -727,6 +727,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initTheme();
   wireDocViewer();
   buildModelDropdown();
+  if (!navigator.bluetooth) { const n = document.getElementById('bt-note'); if (n) n.hidden = false; } // Web Bluetooth notice shows only where it is unavailable
 
   let savedModel = null; try { savedModel = localStorage.getItem(LS_MODEL); } catch (e) {}
   setModel(MODELS[savedModel] ? savedModel : DEFAULT_MODEL, true);

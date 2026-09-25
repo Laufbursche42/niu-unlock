@@ -16,7 +16,7 @@
 :root[data-theme="light"] {
   --bg: #E8EDF5; --card: #FFFFFF; --line: #CDD5E4; --text: #0A0D18; --label: #0A0D18;
   --muted: #4A5468;
-  --accent: #C24E00; --value: #A83E00; --good: #1B7A4B; --bad: #CC2020;
+  --accent: #2A6A00; --value: #2A6A00; --good: #1B7A4B; --bad: #CC2020;
   --warn: #A05800; --gps: #005AA0;
   --scroll: #B6C0D4; --field: #FFFFFF; --chip: #F1F4FA; --on-accent: #FFFFFF;
   color-scheme: light;
