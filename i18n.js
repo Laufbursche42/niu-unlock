@@ -6,7 +6,7 @@
 window.I18N = {
   de: {
     pageTitle: "Laufbursche NIU KQi Tool",
-    brandSub: "NIU KQi Tool (Auslesen)",
+    brandSub: "NIU KQi Tool",
     btNote: "Diese Seite braucht Web Bluetooth. Auf dem iPhone geht das nur über die App Bluefy, auf Android oder Desktop über Chrome oder Edge. Safari kann kein Web Bluetooth.",
     langGroup: "Sprache",
     themeToLight: "Auf helle Darstellung umschalten",
@@ -137,7 +137,7 @@ window.I18N = {
 
   en: {
     pageTitle: "Laufbursche NIU KQi Tool",
-    brandSub: "NIU KQi Tool (read-out)",
+    brandSub: "NIU KQi Tool",
     btNote: "This page needs Web Bluetooth. On iPhone it only works through the Bluefy app; on Android or desktop use Chrome or Edge. Safari has no Web Bluetooth.",
     langGroup: "Language",
     themeToLight: "Switch to light theme",

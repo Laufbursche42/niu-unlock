@@ -1,4 +1,4 @@
-# Laufbursche NIU KQi Tool (read-out)
+# Laufbursche NIU KQi Tool
 
 **The page: https://laufbursche42.github.io/niu-unlock/**
 
