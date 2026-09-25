@@ -252,7 +252,7 @@ function updateEncState() {
   el.textContent = (hsState === 'ready') ? t('encSession') : t('encInit');
 }
 // The heartbeat button is the only read-nudge; enabled only once the session is ready.
-function setControlsEnabled(on) { const b = $('btn-heartbeat'); if (b) b.disabled = !on; }
+function setControlsEnabled(on) { const b = $('btn-heartbeat'); if (b) b.disabled = !on; document.querySelectorAll('.conn-only').forEach(function (el) { el.hidden = !on; }); }
 
 function modelPrefix() { return (MODELS[modelKey] || MODELS.auto).prefix; }
 

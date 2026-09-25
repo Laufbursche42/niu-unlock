@@ -61,7 +61,7 @@
     <p class="hint" data-t="controlsHint"></p>
   </div>
 
-  <div class="card">
+  <div class="card conn-only" hidden>
     <h2 data-t="liveTitle"></h2>
     <div class="grid">
       <div class="tile"><b id="t-speed">-</b><small data-t="tileSpeed"></small></div>
@@ -79,20 +79,20 @@
     <p class="hint" data-t="liveHint"></p>
   </div>
 
-  <div class="card">
+  <div class="card conn-only" hidden>
     <h2 data-t="setTitle"></h2>
     <table class="kv"><tbody id="set-body"></tbody></table>
     <p class="hint" data-t="setHint"></p>
   </div>
 
-  <div class="card">
+  <div class="card conn-only" hidden>
     <h2 data-t="advTitle"></h2>
     <table class="kv"><tbody id="adv-body"></tbody></table>
     <p class="hint" data-t="advHint"></p>
   </div>
 
   <!-- tuning capability shown, but every control disabled/greyed with a grounded reason -->
-  <div class="card gate-card">
+  <div class="card gate-card conn-only" hidden>
     <div class="card-head"><h2 data-t="tuningTitle"></h2><button type="button" class="help-btn" data-help="tuning" aria-label="Info">?</button></div>
     <p class="warn bad" data-t="tuningReason"></p>
     <div class="set-row">
@@ -188,6 +188,6 @@
 
 <script src="aes.js?v=3"></script>
 <script src="i18n.js?v=7"></script>
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>
