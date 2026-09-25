@@ -1,5 +1,7 @@
 # Laufbursche NIU KQi Tool (read-out)
 
+**The page: https://laufbursche42.github.io/niu-unlock/**
+
 A static web page that reads a NIU KQi kick-scooter over Web Bluetooth. Pick your KQi family, enter
 the device keys, connect, and the page runs the handshake and displays live telemetry, read-only
 settings and advanced status. Nothing to install: no app store, no signing, no developer account. It
