@@ -15,8 +15,8 @@ window.I18N = {
     s1Title: "So fängst du an",
     sub: "Live über Web Bluetooth deinen NIU KQi auslesen: Verbinden, Handshake, dann Telemetrie, Einstellungen und erweiterter Status. Läuft in Bluefy (iOS) oder Chrome (Android/Desktop). Nichts verlässt dein Gerät außer dem Seitenaufruf selbst.",
     startHintGuide: "Neu hier? In der <a href=\"#\" data-doc=\"GUIDE\">Anleitung</a> steht jeder Schritt.",
-    expWarn: "Machbarkeitsstudie: Diese Seite verbindet sich per Bluetooth mit einem NIU KQi, führt den Handshake aus und liest Live-Telemetrie, Einstellungen und erweiterten Status - sie belegt, dass das Protokoll trägt. Tuning ist hier aber nicht möglich: Der reale Speed-Deckel sitzt in der verschlüsselten, region-gebundenen FOC-Firmware und ist per BLE nicht anhebbar, und der Schreibpfad ist an keinem Fahrzeug verifiziert (Details in <a href=\"#\" data-doc=\"PROTOCOL\">PROTOCOL.md</a>). Kein fertiges Produkt, keine Gewährleistung, Nutzung nur am eigenen Fahrzeug und auf eigenes Risiko. <a href=\"#\" data-open-disclaimer>Haftungsausschluss lesen</a>.",
-    ownDevice: "Nur am eigenen Fahrzeug. Dieses Werkzeug liest nur aus und ändert keine Einstellung. Die eingetragenen Schlüssel bleiben lokal auf deinem Gerät.",
+    expWarn: "Machbarkeitsstudie: Diese Seite verbindet sich per Bluetooth mit einem NIU KQi, führt den Handshake aus und liest Live-Telemetrie, Einstellungen und erweiterten Status - sie belegt, dass das Protokoll trägt. Sobald die Sitzung steht, kann sie zusätzlich die dokumentierten Schreibbefehle senden (Max-Speed, Kickstart, Cruise, Fast-Lock, Einheit) - aber nur aus der App rekonstruiert und an keinem Fahrzeug verifiziert. Der reale Speed-Deckel sitzt zudem in der verschlüsselten, region-gebundenen FOC-Firmware und ist per BLE nicht anhebbar (Details in <a href=\"#\" data-doc=\"PROTOCOL\">PROTOCOL.md</a>). Kein fertiges Produkt, keine Gewährleistung, Nutzung nur am eigenen Fahrzeug und auf eigenes Risiko. <a href=\"#\" data-open-disclaimer>Haftungsausschluss lesen</a>.",
+    ownDevice: "Nur am eigenen Fahrzeug. Dieses Werkzeug kann - sobald die Sitzung steht - dokumentierte Schreibbefehle senden, die an keinem Fahrzeug verifiziert sind. Die eingetragenen Schlüssel bleiben lokal auf deinem Gerät.",
 
     s2Title: "Verbindung",
     modelLabel: "Modell",
@@ -62,11 +62,12 @@ window.I18N = {
     advGatt: "GATT: Dienst / notify / write",
     advFw: "BLE-Firmware-Version",
 
-    tuningTitle: "Tuning (deaktiviert)",
-    tuningReason: "Diese Steuerungen zeigen nur, was das Protokoll könnte. Sie sind bewusst deaktiviert und mit nichts verbunden: Dieses Werkzeug liest ausschließlich aus.",
-    lblSpeedLimit: "Speed-Limit (foc_k_def_max_speed 21003C)",
-    reasonFirmwareCap: "Deaktiviert - der Speed-Deckel sitzt in der Firmware und ist per BLE nicht anhebbar.",
-    reasonUnverified: "Deaktiviert - der Schreibpfad ist an keinem Fahrzeug verifiziert. Details Byte für Byte in PROTOCOL.md.",
+    tuningTitle: "Tuning (unverifiziert)",
+    tuningReason: "ACHTUNG: Diese Steuerungen senden echte, aus der App rekonstruierte Schreibbefehle an den Controller - an keinem Fahrzeug verifiziert und ohne Gewährleistung. Reine Machbarkeitsstudie. Erst nutzbar, wenn die Sitzung steht.",
+    tuningLegal: "Rechtlicher Hinweis: Das Anheben der Höchstgeschwindigkeit lässt die ABE / Betriebserlaubnis erlöschen; die Nutzung im öffentlichen Verkehr ist dann illegal. Nur am eigenen Fahrzeug, auf Privatgelände und auf eigenes Risiko.",
+    lblSpeedLimit: "Speed-Limit (foc_k_def_max_speed 21003C, km/h)",
+    reasonFirmwareCap: "Hinweis: Der reale Speed-Deckel sitzt in der region-gebundenen FOC-Firmware. Per BLE gesetzte Werte werden davon begrenzt und heben den echten Deckel nicht an.",
+    reasonUnverified: "Schreibpfad nur aus der App rekonstruiert, an keinem Fahrzeug verifiziert. Die Fast-Lock-Wirkung ist nur aus dem Namen erschlossen (unbestätigt). Byte-Details in PROTOCOL.md.",
 
     lblKick: "Kickstart / Zero-Launch",
     lblCruise: "Tempomat / Cruise",
@@ -74,6 +75,7 @@ window.I18N = {
     lblUnit: "Anzeige-Einheit",
     btnOn: "An",
     btnOff: "Aus",
+    btnSend: "Senden",
     optKm: "km/h",
     optMi: "mph",
 
@@ -106,7 +108,7 @@ window.I18N = {
     footTrademarks: "Marken",
     footDisclaimer: "Haftungsausschluss",
     footSource: "Quellcode",
-    disclaimerText: "Dieses Werkzeug ist eine Machbarkeitsstudie, kein fertiges Produkt. Es gibt keine Gewährleistung und keine Garantie für fehlerfreien Betrieb. Es liest nur aus und ändert keine Einstellung am Fahrzeug. Nutzung ausschließlich am eigenen Fahrzeug und auf eigenes Risiko. Die Seite spricht nur lokal per Bluetooth mit dem Gerät, es werden keine Daten an einen Server gesendet. Die eingetragenen Schlüssel bleiben auf deinem Gerät. NIU und KQi sind Marken des jeweiligen Inhabers. Dieses Projekt ist unabhängig und nicht mit NIU verbunden.",
+    disclaimerText: "Dieses Werkzeug ist eine Machbarkeitsstudie, kein fertiges Produkt. Es gibt keine Gewährleistung und keine Garantie für fehlerfreien Betrieb. Sobald die Sitzung steht, kann es dokumentierte, aber an keinem Fahrzeug verifizierte Schreibbefehle senden. Das Anheben der Höchstgeschwindigkeit lässt die ABE / Betriebserlaubnis erlöschen; die Nutzung im öffentlichen Verkehr ist dann illegal. Nutzung ausschließlich am eigenen Fahrzeug, auf Privatgelände und auf eigenes Risiko. Die Seite spricht nur lokal per Bluetooth mit dem Gerät, es werden keine Daten an einen Server gesendet. Die eingetragenen Schlüssel bleiben auf deinem Gerät. NIU und KQi sind Marken des jeweiligen Inhabers. Dieses Projekt ist unabhängig und nicht mit NIU verbunden.",
     buildLabel: "Build",
     docClose: "Schließen",
     docLoading: "wird geladen ...",
@@ -130,8 +132,8 @@ window.I18N = {
     publicLogHelp: "Wenn dies aktiv ist (Standard), wird das Protokoll anonymisiert: Bluetooth-/MAC-Adressen, secret, aesSecret, der Sitzungsschlüssel und rohe Geräte-IDs werden geschwärzt. So kannst du das Log gefahrlos teilen. Nur ausschalten, wenn du das ungekürzte Protokoll lokal für dich selbst brauchst - dann bitte nicht öffentlich teilen.",
     diagLogTitle: "Diagnose-Log",
     diagLogHelp: "Zeichnet zusätzlich die rohen GATT-Details auf (Eigenschaften jeder Characteristic beim Verbinden). Nur zur Fehlersuche. Personenbezogenes wie MAC oder Schlüssel wird bei aktivem Public-Log maskiert, prüfe das Log vor dem Teilen aber selbst.",
-    tuningDisabledTitle: "Tuning ist deaktiviert",
-    tuningDisabledHelp: "Diese Steuerungen sind absichtlich deaktiviert. Erstens ist der Schreibpfad nur aus der App rekonstruiert und an keinem Fahrzeug verifiziert. Zweitens sitzt der reale Speed-Deckel in der verschlüsselten, region-gebundenen FOC-Firmware und lässt sich per BLE nicht anheben. Dieses Werkzeug liest ausschließlich aus. Die Byte-Details des Schreibpfads stehen in PROTOCOL.md.",
+    tuningDisabledTitle: "Tuning (unverifiziert)",
+    tuningDisabledHelp: "Diese Steuerungen senden die aus der App rekonstruierten Schreibbefehle - aber erst, wenn die Sitzung steht (Handshake fertig), vorher sind sie deaktiviert. Sie sind an keinem Fahrzeug verifiziert; die Fast-Lock-Wirkung ist nur aus dem Namen erschlossen und unbestätigt. Der reale Speed-Deckel sitzt zudem in der verschlüsselten, region-gebundenen FOC-Firmware und lässt sich per BLE nicht anheben. Nur am eigenen Fahrzeug, auf eigenes Risiko. Die Byte-Details des Schreibpfads stehen in PROTOCOL.md.",
     disclaimerTitle: "Haftungsausschluss"
   },
 
@@ -146,8 +148,8 @@ window.I18N = {
     s1Title: "Getting started",
     sub: "Read your NIU KQi live over Web Bluetooth: connect, handshake, then telemetry, settings and advanced status. Runs in Bluefy (iOS) or Chrome (Android/desktop). Nothing leaves your device but the page load itself.",
     startHintGuide: "New here? Every step is in the <a href=\"#\" data-doc=\"GUIDE\">guide</a>.",
-    expWarn: "Feasibility study: this page connects to a NIU KQi over Bluetooth, runs the handshake and reads live telemetry, settings and advanced status - it proves the protocol holds. Tuning, however, is not possible here: the real speed cap sits in the encrypted, region-locked FOC firmware and cannot be lifted over BLE, and the write path is not verified on any vehicle (detail in <a href=\"#\" data-doc=\"PROTOCOL\">PROTOCOL.md</a>). Not a finished product, no warranty, use only on your own vehicle and at your own risk. <a href=\"#\" data-open-disclaimer>Read the disclaimer</a>.",
-    ownDevice: "Only on your own vehicle. This tool only reads and changes no setting. The keys you enter stay locally on your device.",
+    expWarn: "Feasibility study: this page connects to a NIU KQi over Bluetooth, runs the handshake and reads live telemetry, settings and advanced status - it proves the protocol holds. Once the session is up it can also send the documented write commands (max speed, kickstart, cruise, fast-lock, unit) - but only reconstructed from the app and not verified on any vehicle. The real speed cap also sits in the encrypted, region-locked FOC firmware and cannot be lifted over BLE (detail in <a href=\"#\" data-doc=\"PROTOCOL\">PROTOCOL.md</a>). Not a finished product, no warranty, use only on your own vehicle and at your own risk. <a href=\"#\" data-open-disclaimer>Read the disclaimer</a>.",
+    ownDevice: "Only on your own vehicle. Once the session is up this tool can send documented write commands that are not verified on any vehicle. The keys you enter stay locally on your device.",
 
     s2Title: "Connection",
     modelLabel: "Model",
@@ -193,11 +195,12 @@ window.I18N = {
     advGatt: "GATT: service / notify / write",
     advFw: "BLE firmware version",
 
-    tuningTitle: "Tuning (disabled)",
-    tuningReason: "These controls only show what the protocol could do. They are deliberately disabled and wired to nothing: this tool only reads out.",
-    lblSpeedLimit: "Speed limit (foc_k_def_max_speed 21003C)",
-    reasonFirmwareCap: "Disabled - the speed cap is in firmware, not liftable over BLE.",
-    reasonUnverified: "Disabled - the write path is not verified on any vehicle. Byte-level detail in PROTOCOL.md.",
+    tuningTitle: "Tuning (unverified)",
+    tuningReason: "WARNING: these controls send real write commands reconstructed from the app to the controller - not verified on any vehicle and with no warranty. Pure feasibility study. Usable only once the session is up.",
+    tuningLegal: "Legal note: raising the top speed voids the ABE / type approval; public-road use is then illegal. Only on your own vehicle, on private ground and at your own risk.",
+    lblSpeedLimit: "Speed limit (foc_k_def_max_speed 21003C, km/h)",
+    reasonFirmwareCap: "Note: the real speed cap sits in the region-locked FOC firmware. Values set over BLE are capped by it and do not raise the real limit.",
+    reasonUnverified: "Write path only reconstructed from the app, not verified on any vehicle. The Fast-Lock effect is inferred from the name only (unconfirmed). Byte-level detail in PROTOCOL.md.",
 
     lblKick: "Kickstart / zero-launch",
     lblCruise: "Cruise control",
@@ -205,6 +208,7 @@ window.I18N = {
     lblUnit: "Display unit",
     btnOn: "On",
     btnOff: "Off",
+    btnSend: "Send",
     optKm: "km/h",
     optMi: "mph",
 
@@ -237,7 +241,7 @@ window.I18N = {
     footTrademarks: "Trademarks",
     footDisclaimer: "Disclaimer",
     footSource: "Source",
-    disclaimerText: "This tool is a feasibility study, not a finished product. There is no warranty and no guarantee of error-free operation. It only reads out and changes no setting on the vehicle. Use it only on your own vehicle and at your own risk. The page talks to the device locally over Bluetooth only, no data is sent to any server. The keys you enter stay on your device. NIU and KQi are trademarks of their respective owner. This project is independent and not affiliated with NIU.",
+    disclaimerText: "This tool is a feasibility study, not a finished product. There is no warranty and no guarantee of error-free operation. Once the session is up it can send documented write commands that are not verified on any vehicle. Raising the top speed voids the ABE / type approval; public-road use is then illegal. Use it only on your own vehicle, on private ground and at your own risk. The page talks to the device locally over Bluetooth only, no data is sent to any server. The keys you enter stay on your device. NIU and KQi are trademarks of their respective owner. This project is independent and not affiliated with NIU.",
     buildLabel: "build",
     docClose: "Close",
     docLoading: "loading ...",
@@ -261,8 +265,8 @@ window.I18N = {
     publicLogHelp: "When this is on (the default), the log is anonymized: Bluetooth / MAC addresses, secret, aesSecret, the session key and raw device IDs are redacted. So you can safely share it. Only turn it off if you need the full log locally for yourself - then do not share it publicly.",
     diagLogTitle: "Diagnostic log",
     diagLogHelp: "Also records the raw GATT details (the properties of each characteristic on connect). For troubleshooting only. Personal data such as the MAC or keys is masked while the public log is on, but review the log yourself before sharing.",
-    tuningDisabledTitle: "Tuning is disabled",
-    tuningDisabledHelp: "These controls are disabled on purpose. First, the write path is only reconstructed from the app and not verified on any vehicle. Second, the real speed cap sits in the encrypted, region-locked FOC firmware and cannot be lifted over BLE. This tool only reads out. The byte-level detail of the write path is in PROTOCOL.md.",
+    tuningDisabledTitle: "Tuning (unverified)",
+    tuningDisabledHelp: "These controls send the write commands reconstructed from the app - but only once the session is up (handshake done); before that they are disabled. They are not verified on any vehicle; the Fast-Lock effect is inferred from the name only and unconfirmed. The real speed cap also sits in the encrypted, region-locked FOC firmware and cannot be lifted over BLE. Only on your own vehicle, at your own risk. The byte-level detail of the write path is in PROTOCOL.md.",
     disclaimerTitle: "Disclaimer"
   }
 };

@@ -7,10 +7,10 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title data-t="pageTitle">Laufbursche NIU KQi Tool</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=8">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=8">
-<link rel="apple-touch-icon" href="favicon-180.png?v=8">
-<link rel="stylesheet" href="styles.css?v=8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=9">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=9">
+<link rel="apple-touch-icon" href="favicon-180.png?v=9">
+<link rel="stylesheet" href="styles.css?v=9">
 </head>
 <body>
 <div class="wrap">
@@ -91,33 +91,37 @@
     <p class="hint" data-t="advHint"></p>
   </div>
 
-  <!-- tuning capability shown, but every control disabled/greyed with a grounded reason -->
+  <!-- documented write commands (niu.md section 5). UNVERIFIED feasibility path: every control is
+       disabled until hsState==='ready' via [data-ready-only]; nothing is invented. -->
   <div class="card gate-card conn-only" hidden>
     <div class="card-head"><h2 data-t="tuningTitle"></h2><button type="button" class="help-btn" data-help="tuning" aria-label="Info">?</button></div>
     <p class="warn bad" data-t="tuningReason"></p>
+    <p class="warn bad" data-t="tuningLegal"></p>
     <div class="set-row">
       <label data-t="lblSpeedLimit"></label>
-      <input type="number" step="0.1" min="1" max="99" value="22" disabled title="disabled">
+      <input type="number" id="speed-in" step="0.1" min="1" max="99" value="22">
+      <button type="button" id="btn-speed" data-t="btnSend" data-ready-only disabled></button>
     </div>
     <p class="hint gate-reason" data-t="reasonFirmwareCap"></p>
     <div class="toggle-row">
       <label data-t="lblKick"></label>
-      <button type="button" class="on" data-t="btnOn" disabled></button>
-      <button type="button" class="off" data-t="btnOff" disabled></button>
+      <button type="button" class="on" id="kick-on" data-t="btnOn" data-ready-only disabled></button>
+      <button type="button" class="off" id="kick-off" data-t="btnOff" data-ready-only disabled></button>
     </div>
     <div class="toggle-row">
       <label data-t="lblCruise"></label>
-      <button type="button" class="on" data-t="btnOn" disabled></button>
-      <button type="button" class="off" data-t="btnOff" disabled></button>
+      <button type="button" class="on" id="cruise-on" data-t="btnOn" data-ready-only disabled></button>
+      <button type="button" class="off" id="cruise-off" data-t="btnOff" data-ready-only disabled></button>
     </div>
     <div class="toggle-row">
       <label data-t="lblFastlock"></label>
-      <button type="button" class="on" data-t="btnOn" disabled></button>
-      <button type="button" class="off" data-t="btnOff" disabled></button>
+      <button type="button" class="on" id="fastlock-on" data-t="btnOn" data-ready-only disabled></button>
+      <button type="button" class="off" id="fastlock-off" data-t="btnOff" data-ready-only disabled></button>
     </div>
     <div class="set-row">
       <label data-t="lblUnit"></label>
-      <select disabled><option data-t="optKm"></option><option data-t="optMi"></option></select>
+      <select id="unit-in"><option value="km" data-t="optKm"></option><option value="mi" data-t="optMi"></option></select>
+      <button type="button" id="btn-unit" data-t="btnSend" data-ready-only disabled></button>
     </div>
     <p class="hint gate-reason" data-t="reasonUnverified"></p>
   </div>
@@ -184,8 +188,8 @@
   </div>
 </dialog>
 
-<script src="aes.js?v=8"></script>
-<script src="i18n.js?v=8"></script>
-<script src="app.js?v=8"></script>
+<script src="aes.js?v=9"></script>
+<script src="i18n.js?v=9"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

@@ -1,12 +1,14 @@
-// Laufbursche NIU KQi Tool: a Web Bluetooth READ-OUT client for the NIU KQi BLE protocol.
+// Laufbursche NIU KQi Tool: a Web Bluetooth client for the NIU KQi BLE protocol.
 // Copyright (c) 2026 Laufbursche (https://github.com/Laufbursche42)
 //
-// Read-out only. It connects to a NIU KQi, runs the verifyPwd1/verifyPwd2 handshake and displays
-// live telemetry, read-only settings and advanced status. It sends NO state-changing commands. The
-// only frame it writes is the refresh/heartbeat (foc_k_cmd=16), a telemetry nudge that changes no
-// setting. The tuning card is shown greyed so the reader sees the protocol capability without any
-// wired send. ONE protocol for all KQi (V1/V2) and the BLE-e-bike variant: GATT service
-// 8ec94e30-...daea50, notify ...e31, write ...e32. The crypto/frame core is in aes.js (window.NIU).
+// It connects to a NIU KQi, runs the verifyPwd1/verifyPwd2 handshake, displays live telemetry,
+// settings and advanced status, and - once the session is ready - can send the documented write
+// commands (set foc_k_def_max_speed with the per-family speed prefix, kickstart/zero-launch,
+// cruise, fast-lock, display unit). Every write command is only reconstructed from the app and is
+// NOT verified on any vehicle: this is a feasibility study, not a product. The write controls are
+// gated: they stay disabled until hsState==='ready'. Only the commands documented in the NIU spec
+// are wired; nothing is invented. ONE protocol for all KQi (V1/V2) and the BLE-e-bike variant:
+// GATT service 8ec94e30-...daea50, notify ...e31, write ...e32. Crypto/frame core in aes.js.
 //
 // All protocol knowledge is from static analysis of the app com.niu.manager 5.12.2 (jadx plus
 // apktool smali), documented in the NIU project's work/notes. Not verified on a vehicle.
@@ -14,7 +16,7 @@
 
 'use strict';
 
-const BUILD = 'v8';   // logged on load so a tester's log reveals which deployed build is running
+const BUILD = 'v9';   // logged on load so a tester's log reveals which deployed build is running
 const N = window.NIU;
 
 // --------------------------- GATT constants ---------------------------
@@ -29,8 +31,15 @@ const SERVICE_CANDIDATES = [SVC_50, SVC_51, SVC_52];
 const OPTIONAL_SERVICES = [SVC_50, SVC_51, SVC_52, HID];
 
 // --------------------------- field codes (KConfig, from telemetrie.md/feature-kommandos.md) ---
-const FOC_K_CMD = '210016';   // U16, controller command (only value used here: 16 refresh/heartbeat)
+const FOC_K_CMD = '210016';   // U16, controller command
 const CMD_REFRESH = 16;       // heartbeat/refresh, telemetry nudge; changes no setting
+// Documented write-command values for foc_k_cmd (niu.md section 5 / feature-kommandos.md,
+// speed-modus.md). Only these; nothing invented. Fast-Lock EFFECT is inferred from the name only
+// (ERSCHLOSSEN), the codes 18/19 themselves are documented (BELEGT).
+const CMD_KICK_ON = 6, CMD_KICK_OFF = 5;         // kickstart / zero-launch
+const CMD_CRUISE_ON = 7, CMD_CRUISE_OFF = 8;     // cruise / Tempomat (needs SUP_FOC_NAV, not offline-checkable)
+const CMD_FASTLOCK_ON = 18, CMD_FASTLOCK_OFF = 19; // fast-lock 0x12/0x13 (needs SUP_FAST_LOCK; effect unverified)
+const CMD_UNIT_KMH = 12, CMD_UNIT_MPH = 13;      // display unit
 
 // Telemetry read codes (documented; see PROTOCOL.md section 6, MODELL-FEATURE-MATRIX.md).
 const C_RT_SPEED = '21000b';  // U16, /10 km/h (scaling assumed)
@@ -251,8 +260,13 @@ function updateEncState() {
   if (!connected) { el.textContent = t('encNone'); return; }
   el.textContent = (hsState === 'ready') ? t('encSession') : t('encInit');
 }
-// The heartbeat button is the only read-nudge; enabled only once the session is ready.
-function setControlsEnabled(on) { const b = $('btn-heartbeat'); if (b) b.disabled = !on; document.querySelectorAll('.conn-only').forEach(function (el) { el.hidden = !on; }); }
+// The heartbeat and all write controls are enabled only once the session is ready (hsState==='ready').
+// [data-ready-only] marks every send-capable control so it stays disabled until then.
+function setControlsEnabled(on) {
+  const b = $('btn-heartbeat'); if (b) b.disabled = !on;
+  document.querySelectorAll('[data-ready-only]').forEach(function (el) { el.disabled = !on; });
+  document.querySelectorAll('.conn-only').forEach(function (el) { el.hidden = !on; });
+}
 
 function modelPrefix() { return (MODELS[modelKey] || MODELS.auto).prefix; }
 
@@ -483,9 +497,11 @@ function scanFields(plainHex) {
   else log('  no known field code found in this frame.');
 }
 
-// --------------------------- sending (read path only) ---------------------------
-// The tool writes exactly two kinds of frame: the handshake frames (verifyPwd1/2) and the refresh
-// heartbeat (foc_k_cmd=16). NO tuning/state-changing command is ever built or sent from the UI.
+// --------------------------- sending ---------------------------
+// Frames written: the handshake frames (verifyPwd1/2), the refresh heartbeat (foc_k_cmd=16), and the
+// documented write commands below - each a single AES(sessionKey) block via buildBlockFrame. Every
+// write command is gated behind hsState==='ready' (both in the UI and in transmit()) and is an
+// UNVERIFIED feasibility path reconstructed from the app; nothing is invented.
 const WRITE_SETTLE_MS = 250;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let writeQueue = Promise.resolve();
@@ -525,6 +541,51 @@ async function transmit(fields, label) {
 function requestLiveValues() {
   if (hsState !== 'ready') { log('no session yet - connect and finish the handshake first.', 'log-err'); return; }
   transmit([[FOC_K_CMD, CMD_REFRESH]], 'refresh/heartbeat foc_k_cmd=16 (telemetry nudge)');
+}
+
+// --------------------------- documented write commands (unverified) ---------------------------
+// All guarded: readyGuard() blocks unless the session is ready, and transmit() blocks a second time.
+// Only the commands documented in niu.md section 5 are here.
+function readyGuard() {
+  if (hsState !== 'ready') { log('no session yet - connect and finish the handshake first.', 'log-err'); return false; }
+  return true;
+}
+// Set foc_k_def_max_speed (21003C, U16, km/h*10). Sent as foc_k_cmd=prefix then the speed field, per
+// the per-family speed prefix (Gen 1 / e-bike = 10, Gen 2 = 30). Same command sets an "open" value or
+// the legal eKFV value (e.g. 22.0 = 220) - the user picks the number.
+function cmdSetMaxSpeed(speedValue) {
+  const prefix = modelPrefix();
+  transmit([[FOC_K_CMD, prefix], [C_MAX_SET, speedValue]],
+    'set foc_k_def_max_speed=' + speedValue + ' (' + (speedValue / 10).toFixed(1) + ' km/h), speed prefix foc_k_cmd=' + prefix);
+}
+function cmdZeroLaunch(on) {
+  transmit([[FOC_K_CMD, on ? CMD_KICK_ON : CMD_KICK_OFF]],
+    'kickstart/zero-launch ' + (on ? 'ON (foc_k_cmd=6)' : 'OFF (foc_k_cmd=5)'));
+}
+function cmdCruise(on) {
+  transmit([[FOC_K_CMD, on ? CMD_CRUISE_ON : CMD_CRUISE_OFF]],
+    'cruise ' + (on ? 'ON (foc_k_cmd=7, needs SUP_FOC_NAV)' : 'OFF (foc_k_cmd=8)'));
+}
+function cmdFastLock(on) {
+  transmit([[FOC_K_CMD, on ? CMD_FASTLOCK_ON : CMD_FASTLOCK_OFF]],
+    'fast-lock ' + (on ? 'ON (foc_k_cmd=18/0x12, needs SUP_FAST_LOCK, effect unverified)' : 'OFF (foc_k_cmd=19/0x13)'));
+}
+function cmdUnit(mph) {
+  transmit([[FOC_K_CMD, mph ? CMD_UNIT_MPH : CMD_UNIT_KMH]],
+    'display unit ' + (mph ? 'mph (foc_k_cmd=13)' : 'km/h (foc_k_cmd=12)'));
+}
+// Speed send from the UI: parse the km/h input, clamp, convert to km/h*10.
+function sendSpeedFromInput() {
+  if (!readyGuard()) return;
+  const el = $('speed-in');
+  const kmh = parseFloat((el && el.value) || '');
+  if (!isFinite(kmh) || kmh < 1 || kmh > 99) { log('invalid speed value - enter km/h between 1 and 99.', 'log-err'); return; }
+  cmdSetMaxSpeed(Math.round(kmh * 10));
+}
+function sendUnitFromInput() {
+  if (!readyGuard()) return;
+  const sel = $('unit-in');
+  cmdUnit(!!(sel && sel.value === 'mi'));
 }
 
 // --------------------------- diagnostics ---------------------------
@@ -755,6 +816,15 @@ window.addEventListener('DOMContentLoaded', () => {
   $('btn-conn').addEventListener('click', () => { if ($('btn-conn').dataset.act === 'disconnect') disconnectBle(); else pickAndConnect(); });
   { const sel = $('model-in'); if (sel) sel.addEventListener('change', () => setModel(sel.value)); }
   { const b = $('btn-heartbeat'); if (b) b.addEventListener('click', requestLiveValues); }
+  // Write controls (all gated: disabled until hsState==='ready' via [data-ready-only] + readyGuard).
+  { const b = $('btn-speed'); if (b) b.addEventListener('click', sendSpeedFromInput); }
+  { const b = $('kick-on'); if (b) b.addEventListener('click', () => { if (readyGuard()) cmdZeroLaunch(true); }); }
+  { const b = $('kick-off'); if (b) b.addEventListener('click', () => { if (readyGuard()) cmdZeroLaunch(false); }); }
+  { const b = $('cruise-on'); if (b) b.addEventListener('click', () => { if (readyGuard()) cmdCruise(true); }); }
+  { const b = $('cruise-off'); if (b) b.addEventListener('click', () => { if (readyGuard()) cmdCruise(false); }); }
+  { const b = $('fastlock-on'); if (b) b.addEventListener('click', () => { if (readyGuard()) cmdFastLock(true); }); }
+  { const b = $('fastlock-off'); if (b) b.addEventListener('click', () => { if (readyGuard()) cmdFastLock(false); }); }
+  { const b = $('btn-unit'); if (b) b.addEventListener('click', sendUnitFromInput); }
   { const b = $('btn-copy-log'); if (b) b.addEventListener('click', copyLog); }
   { const b = $('btn-clear-log'); if (b) b.addEventListener('click', clearLog); }
   { const b = $('btn-save-log'); if (b) b.addEventListener('click', saveLog); }
