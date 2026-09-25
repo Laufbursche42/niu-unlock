@@ -1,11 +1,11 @@
 /* NIU KQi read-out tool. Palette and theme mechanics taken 1:1 from the Laufbursche Edition
-   template, only the accent set to NIU orange. Dark is the default; the light set is applied via
-   data-theme on <html>. */
+   template: the lime accent in the dark default, dark green (#2A6A00) in the light set applied
+   via data-theme on <html>. Same corporate identity as the other unlock tools. */
 :root {
   --bg: #0A0C10; --card: #111420; --line: #1C2035; --text: #E4EDF6; --label: #C6D2E2;
-  --muted: #8A93A8; --accent: #FF7A1A; --value: #FFA24D; --good: #1EE89A; --bad: #FF5050;
+  --muted: #8A93A8; --accent: #B8F020; --value: #BCEB39; --good: #1EE89A; --bad: #FF5050;
   --warn: #FFAA18; --gps: #3DB8FF; --mono: ui-monospace, Consolas, monospace;
-  --scroll: #2B3350; --field: #0d1018; --chip: #171b2a; --on-accent: #100a06;
+  --scroll: #2B3350; --field: #0d1018; --chip: #171b2a; --on-accent: #0A0C10;
   color-scheme: dark;
   --warn-bg: #FFAA1814; --warn-line: #FFAA1840; --warn-strong: #ffc65a;
   --bad-bg: #FF505014; --bad-line: #FF505040; --bad-strong: #ff8080;
@@ -87,7 +87,7 @@ label { color: var(--label); font-size: 12px; text-transform: uppercase; letter-
 .status[data-state="connecting"], .status[data-state="linking"], .status[data-state="handshake"] { color: var(--warn); border-color: var(--warn-line-soft); }
 .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .tile { background: var(--field); border: 1px solid var(--line); border-radius: 10px; padding: 12px; text-align: center; }
-.tile b { display: block; font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--value); word-break: break-word; }
+.tile b { display: block; font-family: var(--mono); font-size: 24px; font-weight: 700; color: var(--value); word-break: break-word; }
 .tile small { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
 .hint { color: var(--muted); font-size: 12px; margin: 0; }
 .hint a, .warn a { color: var(--accent); }
@@ -124,6 +124,9 @@ table.kv tr:first-child td { border-top: 0; }
 .kv-k { color: var(--label); padding-right: 12px !important; }
 .kv-v { color: var(--value); font-family: var(--mono); text-align: right; word-break: break-word; }
 .kv-muted { color: var(--muted); }
+
+/* Session/encryption state read-out reads as a value, like the tiles and kv values. */
+#enc-state { color: var(--value); font-family: var(--mono); }
 
 /* Greyed tuning card: capability shown, everything disabled. */
 .gate-card { opacity: .96; }

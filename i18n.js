@@ -24,7 +24,6 @@ window.I18N = {
 
     s2Title: "Verbindung",
     modelLabel: "Modell",
-    modelChoose: "Modell wählen",
     modelHint: "Der reale Produkttyp kommt bei NIU vom Server und ist per BLE-Name nicht sicher erkennbar. Wähle deine KQi-Familie deshalb selbst. Sie ist beim Auslesen nur informativ: Sie benennt den Speed-Vorspann (Gen 1 -> 10, Gen 2 / 90-100-200 -> 30), den nur der Schreibpfad nutzt. Dieses Werkzeug sendet ihn nicht.",
     encStatePrefix: "Sitzung:",
 
@@ -73,7 +72,6 @@ window.I18N = {
     reasonFirmwareCap: "Deaktiviert - der Speed-Deckel sitzt in der Firmware und ist per BLE nicht anhebbar.",
     reasonUnverified: "Deaktiviert - der Schreibpfad ist an keinem Fahrzeug verifiziert. Details Byte für Byte in PROTOCOL.md.",
 
-    featTitle: "Fahr-Features",
     lblKick: "Kickstart / Zero-Launch",
     lblCruise: "Tempomat / Cruise",
     lblFastlock: "Fast-Lock",
@@ -161,7 +159,6 @@ window.I18N = {
 
     s2Title: "Connection",
     modelLabel: "Model",
-    modelChoose: "Choose model",
     modelHint: "With NIU the real product type comes from the server and cannot be read reliably from the BLE name, so pick your KQi family yourself. On a read-out tool it is only informational: it names the speed prefix (Gen 1 -> 10, Gen 2 / 90-100-200 -> 30) that only the write path uses. This tool does not send it.",
     encStatePrefix: "Session:",
 
@@ -210,7 +207,6 @@ window.I18N = {
     reasonFirmwareCap: "Disabled - the speed cap is in firmware, not liftable over BLE.",
     reasonUnverified: "Disabled - the write path is not verified on any vehicle. Byte-level detail in PROTOCOL.md.",
 
-    featTitle: "Ride features",
     lblKick: "Kickstart / zero-launch",
     lblCruise: "Cruise control",
     lblFastlock: "Fast-Lock",
