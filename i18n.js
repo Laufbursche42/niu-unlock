@@ -12,14 +12,10 @@ window.I18N = {
     themeToLight: "Auf helle Darstellung umschalten",
     themeToDark: "Auf dunkle Darstellung umschalten",
 
-    bannerTitle: "Nur Auslesen. Tuning ist hier nicht möglich.",
-    bannerWorks: "Dieses Werkzeug verbindet sich mit deinem NIU KQi, führt den Handshake aus und zeigt Live-Telemetrie, Einstellungen und erweiterten Status. Es sendet keine Kommandos, die etwas verändern. Der einzige Frame, den es schreibt, ist der Refresh-Heartbeat (foc_k_cmd=16), ein reiner Anstoß zum Nachliefern der Telemetrie.",
-    bannerWhy: "Warum kein Tuning: Erstens ist der Schreib- beziehungsweise Kommandopfad nur aus der statischen Analyse der App com.niu.manager 5.12.2 rekonstruiert und an keinem Fahrzeug verifiziert (die geräteseitige Bildung des Sitzungsschlüssels bleibt OFFEN, siehe <a href=\"#\" data-doc=\"PROTOCOL\">PROTOCOL.md</a>). Zweitens sitzt der reale Speed-Deckel in der verschlüsselten, region-gebundenen FOC-Firmware. Kein BLE-Kommando hebt ihn an. Das Setzen von foc_k_def_max_speed kommt über diesen harten Deckel nicht hinaus.",
-
     s1Title: "So fängst du an",
     sub: "Live über Web Bluetooth deinen NIU KQi auslesen: Verbinden, Handshake, dann Telemetrie, Einstellungen und erweiterter Status. Läuft in Bluefy (iOS) oder Chrome (Android/Desktop). Nichts verlässt dein Gerät außer dem Seitenaufruf selbst.",
     startHintGuide: "Neu hier? In der <a href=\"#\" data-doc=\"GUIDE\">Anleitung</a> steht jeder Schritt.",
-    expWarn: "Machbarkeitsstudie: Diese Seite zeigt, was sich per Bluetooth aus einem NIU KQi auslesen lässt. Sie ist kein fertiges Produkt. Fehlerfreier Betrieb wird nicht versprochen, es gibt keinerlei Gewährleistung. Alles, was du hier tust, tust du auf eigenes Risiko. <a href=\"#\" data-open-disclaimer>Haftungsausschluss lesen</a>.",
+    expWarn: "Machbarkeitsstudie: Diese Seite verbindet sich per Bluetooth mit einem NIU KQi, führt den Handshake aus und liest Live-Telemetrie, Einstellungen und erweiterten Status - sie belegt, dass das Protokoll trägt. Tuning ist hier aber nicht möglich: Der reale Speed-Deckel sitzt in der verschlüsselten, region-gebundenen FOC-Firmware und ist per BLE nicht anhebbar, und der Schreibpfad ist an keinem Fahrzeug verifiziert (Details in <a href=\"#\" data-doc=\"PROTOCOL\">PROTOCOL.md</a>). Kein fertiges Produkt, keine Gewährleistung, Nutzung nur am eigenen Fahrzeug und auf eigenes Risiko. <a href=\"#\" data-open-disclaimer>Haftungsausschluss lesen</a>.",
     ownDevice: "Nur am eigenen Fahrzeug. Dieses Werkzeug liest nur aus und ändert keine Einstellung. Die eingetragenen Schlüssel bleiben lokal auf deinem Gerät.",
 
     s2Title: "Verbindung",
@@ -147,14 +143,10 @@ window.I18N = {
     themeToLight: "Switch to light theme",
     themeToDark: "Switch to dark theme",
 
-    bannerTitle: "Read-out only. Tuning is not possible here.",
-    bannerWorks: "This tool connects to your NIU KQi, runs the handshake and displays live telemetry, settings and advanced status. It sends no state-changing commands. The only frame it writes is the refresh heartbeat (foc_k_cmd=16), a pure nudge to make the scooter re-send telemetry.",
-    bannerWhy: "Why no tuning: first, the write / command path is only reconstructed from static analysis of the app com.niu.manager 5.12.2 and is not verified on any vehicle (the device-side session-key formation stays OPEN, see <a href=\"#\" data-doc=\"PROTOCOL\">PROTOCOL.md</a>). Second, the real speed cap sits in the encrypted, region-locked FOC firmware and no BLE command lifts it. Setting foc_k_def_max_speed never gets past that hard cap.",
-
     s1Title: "Getting started",
     sub: "Read your NIU KQi live over Web Bluetooth: connect, handshake, then telemetry, settings and advanced status. Runs in Bluefy (iOS) or Chrome (Android/desktop). Nothing leaves your device but the page load itself.",
     startHintGuide: "New here? Every step is in the <a href=\"#\" data-doc=\"GUIDE\">guide</a>.",
-    expWarn: "Feasibility study: this page shows what can be read out of a NIU KQi over Bluetooth. It is not a finished product. Error-free operation is not promised and there is no warranty of any kind. Whatever you do here, you do at your own risk. <a href=\"#\" data-open-disclaimer>Read the disclaimer</a>.",
+    expWarn: "Feasibility study: this page connects to a NIU KQi over Bluetooth, runs the handshake and reads live telemetry, settings and advanced status - it proves the protocol holds. Tuning, however, is not possible here: the real speed cap sits in the encrypted, region-locked FOC firmware and cannot be lifted over BLE, and the write path is not verified on any vehicle (detail in <a href=\"#\" data-doc=\"PROTOCOL\">PROTOCOL.md</a>). Not a finished product, no warranty, use only on your own vehicle and at your own risk. <a href=\"#\" data-open-disclaimer>Read the disclaimer</a>.",
     ownDevice: "Only on your own vehicle. This tool only reads and changes no setting. The keys you enter stay locally on your device.",
 
     s2Title: "Connection",

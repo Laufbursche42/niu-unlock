@@ -110,13 +110,6 @@ pre#log { margin: 0; background: var(--field); border: 1px solid var(--line); bo
 .foot .ver { color: var(--muted); font-size: 12px; white-space: nowrap; }
 .foot-copy { color: var(--muted) !important; font-size: 11px; }
 
-/* Top banner: read-out only. Stronger than a hint, distinct from .warn, works in both themes. */
-.banner { background: var(--warn-bg); border: 1px solid var(--accent); border-left-width: 4px;
-  border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 7px; }
-.banner b { color: var(--accent); font-size: 14px; }
-.banner p { margin: 0; color: var(--label); font-size: 12.5px; }
-.banner a { color: var(--accent); }
-
 /* Read-only key/value tables (settings + advanced). */
 table.kv { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 table.kv td { border-top: 1px solid var(--line); padding: 7px 4px; vertical-align: top; }
