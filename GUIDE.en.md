@@ -8,6 +8,8 @@
 > heartbeat (foc_k_cmd=16), a pure nudge to make the scooter re-send telemetry. Tuning is disabled on
 > purpose (reasons in section 8).
 
+> **Important for error reports:** switch on the **Diagnostic log** at the bottom of the page *before* you connect to the scooter. Only then is the full connection handshake captured - and those are exactly the lines we need in a [ticket](https://github.com/Laufbursche42/Laufbursche42/issues) to reproduce a problem.
+
 ## 1. What you need
 
 Everything happens in the browser over Web Bluetooth: pick the model, enter the keys, connect, read the

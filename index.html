@@ -2,15 +2,13 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<!-- frame-ancestors is ignored inside a meta element; it only works as an HTTP header. GitHub Pages
-     sends no headers of its own, so it is omitted here. connect-src 'self' keeps this fully local. -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title data-t="pageTitle">Laufbursche NIU KQi Tool</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=9">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=9">
-<link rel="apple-touch-icon" href="favicon-180.png?v=9">
-<link rel="stylesheet" href="styles.css?v=9">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png">
+<link rel="stylesheet" href="styles.css?v=10">
 </head>
 <body>
 <div class="wrap">
@@ -27,6 +25,8 @@
       </div>
     </div>
   </header>
+
+  <p class="hint infobox" data-t="infoBannerHtml"></p>
 
   <p class="warn" id="bt-note" data-t="btNote" hidden></p>
 
@@ -54,6 +54,10 @@
     <div class="key-row"><label data-t="lblMac"></label><input id="mac-in" type="text" autocomplete="off" spellcheck="false" placeholder="AA:BB:CC:DD:EE:FF"></div>
     <p class="hint" data-t="macNote"></p>
 
+    <div class="log-opt">
+      <span data-t="showallLabel"></span>
+      <input type="checkbox" id="showall">
+    </div>
     <div class="btns">
       <button class="primary span2" id="btn-conn"></button>
     </div>
@@ -61,12 +65,11 @@
     <p class="hint" data-t="controlsHint"></p>
   </div>
 
-  <div class="card conn-only" hidden>
+  <div class="card" id="live-card" hidden>
     <h2 data-t="liveTitle"></h2>
     <div class="grid">
       <div class="tile"><b id="t-speed">-</b><small data-t="tileSpeed"></small></div>
       <div class="tile"><b id="t-gear">-</b><small data-t="tileGear"></small></div>
-      <div class="tile"><b id="t-range">-</b><small data-t="tileRange"></small></div>
       <div class="tile"><b id="t-max">-</b><small data-t="tileMax"></small></div>
       <div class="tile"><b id="t-maxrated">-</b><small data-t="tileMaxRated"></small></div>
       <div class="tile"><b id="t-mode">-</b><small data-t="tileMode"></small></div>
@@ -79,22 +82,18 @@
     <p class="hint" data-t="liveHint"></p>
   </div>
 
-  <div class="card conn-only" hidden>
-    <h2 data-t="setTitle"></h2>
-    <table class="kv"><tbody id="set-body"></tbody></table>
-    <p class="hint" data-t="setHint"></p>
+  <div class="card" id="batt-card" hidden>
+    <div class="card-head"><h2 data-t="battTitle"></h2><button type="button" class="help-btn" data-help="batt" aria-label="Info">?</button></div>
+    <div class="grid">
+      <div class="tile"><b id="t-range">-</b><small data-t="tileRange"></small></div>
+    </div>
+    <p class="hint" data-t="battHint"></p>
   </div>
 
-  <div class="card conn-only" hidden>
-    <h2 data-t="advTitle"></h2>
-    <table class="kv"><tbody id="adv-body"></tbody></table>
-    <p class="hint" data-t="advHint"></p>
-  </div>
+  <div class="card" id="more-card" hidden>
+    <div class="card-head"><h2 data-t="moreTitle"></h2><button type="button" class="help-btn" data-help="tuning" aria-label="Info">?</button></div>
 
-  <!-- documented write commands (niu.md section 5). UNVERIFIED feasibility path: every control is
-       disabled until hsState==='ready' via [data-ready-only]; nothing is invented. -->
-  <div class="card gate-card conn-only" hidden>
-    <div class="card-head"><h2 data-t="tuningTitle"></h2><button type="button" class="help-btn" data-help="tuning" aria-label="Info">?</button></div>
+    <h3 class="set-group" data-t="setgrpSpeed"></h3>
     <p class="warn bad" data-t="tuningReason"></p>
     <p class="warn bad" data-t="tuningLegal"></p>
     <div class="set-row">
@@ -118,12 +117,22 @@
       <button type="button" class="on" id="fastlock-on" data-t="btnOn" data-ready-only disabled></button>
       <button type="button" class="off" id="fastlock-off" data-t="btnOff" data-ready-only disabled></button>
     </div>
+    <p class="hint gate-reason" data-t="reasonUnverified"></p>
+
+    <h3 class="set-group" data-t="setgrpGeneral"></h3>
     <div class="set-row">
       <label data-t="lblUnit"></label>
       <select id="unit-in"><option value="km" data-t="optKm"></option><option value="mi" data-t="optMi"></option></select>
       <button type="button" id="btn-unit" data-t="btnSend" data-ready-only disabled></button>
     </div>
-    <p class="hint gate-reason" data-t="reasonUnverified"></p>
+    <table class="kv"><tbody id="set-body"></tbody></table>
+    <p class="hint" data-t="setHint"></p>
+  </div>
+
+  <div class="card" id="raw-card" hidden>
+    <h2 data-t="advTitle"></h2>
+    <table class="kv"><tbody id="adv-body"></tbody></table>
+    <p class="hint" data-t="advHint"></p>
   </div>
 
   <div class="card">
@@ -132,36 +141,34 @@
       <div class="log-opt">
         <span data-t="publicLogLabel"></span>
         <input type="checkbox" id="public-log" checked>
-        <button type="button" class="help-btn" data-help="publiclog" aria-label="?">?</button>
+        <button type="button" class="help-btn" data-help="publiclog" aria-label="Info">?</button>
       </div>
       <div class="log-opt">
         <span data-t="diagLogLabel"></span>
         <input type="checkbox" id="diag-log">
-        <button type="button" class="help-btn" data-help="diaglog" aria-label="?">?</button>
+        <button type="button" class="help-btn" data-help="diaglog" aria-label="Info">?</button>
       </div>
     </div>
     <div class="btns">
       <button type="button" id="btn-copy-log" data-t="btnCopyLog"></button>
       <button type="button" id="btn-clear-log" data-t="btnClearLog"></button>
       <button type="button" id="btn-save-log" class="span2" data-t="btnSaveLog"></button>
-      <button type="button" id="btn-diag" class="span2" data-t="btnDiag"></button>
     </div>
-    <p class="hint" data-t="diagHint"></p>
     <pre id="log"></pre>
     <p class="hint"><span class="log-tx" data-t="logTxLegend"></span>, <span class="log-rx" data-t="logRxLegend"></span></p>
   </div>
 
   <footer class="foot">
     <span class="foot-links">
-      <a href="#" data-doc="GUIDE" data-t="footGuide"></a>
+      <a id="link-guide" href="GUIDE.de.md" data-doc="GUIDE" data-t="footGuide"></a>
       <a href="https://github.com/Laufbursche42/niu-unlock" target="_blank" rel="noopener" data-t="footSource"></a>
-      <a href="#" data-doc="README" data-t="footReadme"></a>
+      <a id="link-readme" href="README.md" data-doc="README" data-t="footReadme"></a>
       <a id="link-disclaimer" href="#" data-t="footDisclaimer"></a>
-      <a href="#" data-doc="LICENSE" data-t="footLicense"></a>
-      <a href="#" data-doc="PRIVACY" data-t="footPrivacy"></a>
-      <a href="#" data-doc="TRADEMARKS" data-t="footTrademarks"></a>
+      <a id="link-license" href="LICENSE.de.md" data-doc="LICENSE" data-t="footLicense"></a>
+      <a id="link-privacy" href="PRIVACY.de.md" data-doc="PRIVACY" data-t="footPrivacy"></a>
+      <a id="link-trademarks" href="TRADEMARKS.de.md" data-doc="TRADEMARKS" data-t="footTrademarks"></a>
     </span>
-    <span class="ver" id="build-ver"></span>
+    <span class="foot-links"><span class="ver" id="build-ver"></span><a href="https://github.com/Laufbursche42/Laufbursche42/issues" target="_blank" rel="noopener" data-t="footIssue"></a></span>
     <a class="foot-copy" href="https://laufbursche42.github.io/Laufbursche42/" target="_blank" rel="noopener">Copyright (c) 2026 Laufbursche</a>
   </footer>
 </div>
@@ -188,8 +195,20 @@
   </div>
 </dialog>
 
-<script src="aes.js?v=9"></script>
-<script src="i18n.js?v=9"></script>
-<script src="app.js?v=9"></script>
+<dialog id="confirm" aria-labelledby="confirm-title">
+  <div class="doc-head">
+    <h3 id="confirm-title" data-t="confirmTitle"></h3>
+    <button type="button" id="confirm-x">&times;</button>
+  </div>
+  <div class="doc-body"><p id="confirm-body"></p></div>
+  <div class="doc-foot">
+    <button type="button" id="confirm-no" data-t="confirmCancel"></button>
+    <button type="button" id="confirm-ok" class="primary" data-t="confirmOk"></button>
+  </div>
+</dialog>
+
+<script src="aes.js?v=10"></script>
+<script src="i18n.js?v=10"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>

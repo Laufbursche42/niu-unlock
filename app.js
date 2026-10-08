@@ -16,7 +16,7 @@
 
 'use strict';
 
-const BUILD = 'v9';   // logged on load so a tester's log reveals which deployed build is running
+const BUILD = 'v10';   // logged on load so a tester's log reveals which deployed build is running
 const N = window.NIU;
 
 // --------------------------- GATT constants ---------------------------
@@ -49,8 +49,14 @@ const C_MAX_SET  = '21003c';  // U16, /10, set top speed
 const C_ACCEL    = '210029';  // U8 foc_k_throttle_mode_set, value encoding unknown - shown as raw hex
 const C_RANGE    = '11000d';  // U16, remaining range (unit unconfirmed)
 const C_FCODE    = '110006';  // U8, error code (0 = OK)
-const C_RT_STATUS= '110004';  // U32, status word (bit meanings unknown)
-const C_FN_STATUS= '110005';  // U32, status word (bit meanings unknown)
+const C_RT_STATUS= '110004';  // U32, db-board status word (bit meanings unknown)
+const C_FN_STATUS= '110005';  // U32, db-board status word (bit meanings unknown)
+// FOC-side status words and the controller software version are proven-readable in the KConfig
+// catalog (C26095a.java): 210010 realtime_status1 (:507), 21000F function_status1 (:504),
+// 210002 foc_k_s_ver UTF-8 8B (:477). Shown raw/as-string; individual status bits stay undecoded.
+const C_FOC_RT_STATUS = '210010';  // U32, controller realtime status word (bit meanings unknown)
+const C_FOC_FN_STATUS = '21000f';  // U32, controller function status word (bit meanings unknown)
+const C_SVER     = '210002';  // UTF-8, 8 bytes, controller software version string
 
 // --------------------------- model register ---------------------------
 // The only difference between the KQi families is the speed prefix (foc_k_cmd sent before the speed
@@ -85,6 +91,7 @@ let random1Hex = '', random2Hex = '';
 const live = {
   rtSpeed: null, gears: null, maxSet: null, maxRated: null, accelHex: null,
   range: null, fCode: null, rtStatus: null, fnStatus: null, rawData: null,
+  focRtStatus: null, focFnStatus: null, sVer: null,
 };
 
 function $(id) { return document.getElementById(id); }
@@ -111,8 +118,7 @@ function anonymize(s) {
   return redact(s.replace(/\x01[^\x01]*\x01/g, 'XX').replace(/\x01/g, ''));
 }
 function log(msg, cls) {
-  const ts = new Date().toISOString().slice(11, 19);   // HH:MM:SS
-  const raw = '[' + ts + '] ' + msg;
+  const raw = '[' + new Date().toTimeString().slice(0, 8) + '] ' + msg;   // local [HH:MM:SS]
   state.logBuffer.push({ raw, cls: cls || '' });
   const pre = $('log');
   if (pre) {
@@ -134,22 +140,19 @@ function renderLog() {
   });
   pre.scrollTop = pre.scrollHeight;
 }
-function printDiagnostics() {
-  const nav = (typeof navigator !== 'undefined') ? navigator : {};
+function logDiagnosticHeader() {
+  // Fold the real AES + block-frame self-tests (aes.js) into one canonical protocol self-test line.
+  const st = !!(N && N.selfTestAES && N.selfTestFrame && N.selfTestAES().ok && N.selfTestFrame().ok);
   log('=== niu-unlock diagnostic ===');
   log('build: ' + BUILD);
   log('time: ' + new Date().toISOString());
-  log('userAgent: ' + (nav.userAgent || '(unknown)'));
-  log('platform: ' + (nav.platform || '(unknown)'));
-  log('webBluetooth: ' + (nav.bluetooth ? 'yes' : 'no'));
-  log('=============================');
-  const aesT = N.selfTestAES();
-  log('AES-128 FIPS-197 self-test: ' + (aesT.ok ? 'OK' : 'FAILED') + ' (CT=' + aesT.ct + ')', aesT.ok ? 'log-ok' : 'log-err');
-  const frT = N.selfTestFrame();
-  log('block-frame self-test (25.0 km/h): ' + (frT.ok ? 'OK' : 'FAILED') + ' data area=' + frT.plainHex, frT.ok ? 'log-ok' : 'log-err');
-  log('model: ' + MODELS[modelKey].label + ' [write-path prefix ' + MODELS[modelKey].prefix + ', not sent by this tool]');
+  log('userAgent: ' + (navigator.userAgent || '?'));
+  log('platform: ' + (navigator.platform || '?'));
+  log('webBluetooth: ' + (navigator.bluetooth ? 'yes' : 'no'));
+  log('protocol self-test: ' + (st ? 'OK' : 'FAILED'), st ? 'log-ok' : 'log-err');
+  log('================================');
 }
-function clearLog() { state.logBuffer = []; const pre = $('log'); if (pre) pre.textContent = ''; log(t('logCleared')); printDiagnostics(); }
+function clearLog() { state.logBuffer = []; const pre = $('log'); if (pre) pre.textContent = ''; log(t('logCleared')); logDiagnosticHeader(); }
 function copyLog() {
   const text = state.logBuffer.map(e => anonymize(e.raw)).join('\n');
   if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -182,6 +185,7 @@ function saveLog() {
 // --------------------------- help modal ---------------------------
 const HELP = {
   keys: ['helpKeysTitle', 'helpKeys'],
+  batt: ['help_batt_t', 'help_batt_b'],
   publiclog: ['publicLogTitle', 'publicLogHelp'],
   diaglog: ['diagLogTitle', 'diagLogHelp'],
   tuning: ['tuningDisabledTitle', 'tuningDisabledHelp'],
@@ -234,6 +238,9 @@ function renderAdvanced() {
   body.textContent = '';
   body.appendChild(kvRow(t('advRtStatus'), live.rtStatus != null ? live.rtStatus : null));
   body.appendChild(kvRow(t('advFnStatus'), live.fnStatus != null ? live.fnStatus : null));
+  body.appendChild(kvRow(t('advFocRtStatus'), live.focRtStatus != null ? live.focRtStatus : null));
+  body.appendChild(kvRow(t('advFocFnStatus'), live.focFnStatus != null ? live.focFnStatus : null));
+  body.appendChild(kvRow(t('advSVer'), live.sVer));
   body.appendChild(kvRow(t('advErr'), live.fCode == null ? null : (live.fCode === 0 ? '0 (OK)' : String(live.fCode))));
   body.appendChild(kvRow(t('advRawData'), live.rawData));
   const gatt = usedService ? (usedService + '  notify=' + (notifyChar ? notifyChar.uuid : '-') + '  write=' + (writeChar ? writeChar.uuid : '-')) : null;
@@ -265,7 +272,8 @@ function updateEncState() {
 function setControlsEnabled(on) {
   const b = $('btn-heartbeat'); if (b) b.disabled = !on;
   document.querySelectorAll('[data-ready-only]').forEach(function (el) { el.disabled = !on; });
-  document.querySelectorAll('.conn-only').forEach(function (el) { el.hidden = !on; });
+  // telemetry + settings cards stay hidden until the session is ready; on load only intro/connect/log show
+  ['live-card', 'batt-card', 'more-card', 'raw-card'].forEach(function (id) { const el = $(id); if (el) el.hidden = !on; });
 }
 
 function modelPrefix() { return (MODELS[modelKey] || MODELS.auto).prefix; }
@@ -357,7 +365,7 @@ async function connectGatt(dev) {
     connected = false; hsState = 'idle'; sessionKey = null;
     server = await device.gatt.connect();
     const svc = await resolveService(server);
-    if (!svc) { try { device.gatt.disconnect(); } catch (e) {} setStatus('no-service'); log('no NIU service found (8ec94e30-...daea50/51/52). Wrong device? Use the diagnostics button.', 'log-err'); return; }
+    if (!svc) { try { device.gatt.disconnect(); } catch (e) {} setStatus('no-service'); log('no NIU service found (8ec94e30-...daea50/51/52). Wrong device?', 'log-err'); return; }
     usedService = svc.uuid;
     if (!(await assignChars(svc))) { try { device.gatt.disconnect(); } catch (e) {} setStatus('no-char'); log('notify/write characteristic not found on ' + svc.uuid, 'log-err'); return; }
     await notifyChar.startNotifications();
@@ -479,6 +487,20 @@ function readAfter(plainHex, code, byteLen) {
   if (v.length < byteLen * 2) return null;
   return v;
 }
+// UTF-8/ASCII string field: read byteLen bytes after the 3-byte code, decode, trim NUL padding.
+function readStringAfter(plainHex, code, byteLen) {
+  const v = readAfter(plainHex, code, byteLen);
+  if (v == null) return null;
+  let s = '';
+  for (let i = 0; i < v.length; i += 2) {
+    const c = parseInt(v.substr(i, 2), 16);
+    if (c === 0) break;                 // NUL terminates the padded string
+    if (c < 0x20 || c > 0x7e) return null;  // non-printable -> not a valid version string
+    s += String.fromCharCode(c);
+  }
+  s = s.trim();
+  return s.length ? s : null;
+}
 function scanFields(plainHex) {
   const parts = [];
   let v;
@@ -493,6 +515,12 @@ function scanFields(plainHex) {
   if ((v = readAfter(plainHex, C_FCODE, 1)) != null) { live.fCode = parseInt(v, 16); parts.push('f_code=' + live.fCode); }
   if ((v = readAfter(plainHex, C_RT_STATUS, 4)) != null) { live.rtStatus = '0x' + v.toUpperCase(); parts.push('rt_status=0x' + v + ' (bit meanings unknown)'); }
   if ((v = readAfter(plainHex, C_FN_STATUS, 4)) != null) { live.fnStatus = '0x' + v.toUpperCase(); parts.push('fn_status=0x' + v + ' (bit meanings unknown)'); }
+  // Controller-side status words 210010 / 21000F (proven readable, C26095a.java:507/:504). Raw U32,
+  // individual bits left undecoded (only a few bits are proven; the full map is OPEN).
+  if ((v = readAfter(plainHex, C_FOC_RT_STATUS, 4)) != null) { live.focRtStatus = '0x' + v.toUpperCase(); parts.push('foc_rt_status=0x' + v + ' (bit meanings unknown)'); }
+  if ((v = readAfter(plainHex, C_FOC_FN_STATUS, 4)) != null) { live.focFnStatus = '0x' + v.toUpperCase(); parts.push('foc_fn_status=0x' + v + ' (bit meanings unknown)'); }
+  // Controller software version 210002 (proven readable UTF-8 8B, C26095a.java:477).
+  if ((v = readStringAfter(plainHex, C_SVER, 8)) != null) { live.sVer = v; parts.push('foc_s_ver=' + v); }
   if (parts.length) log('  fields: ' + parts.join('  '), 'log-ok');
   else log('  no known field code found in this frame.');
 }
@@ -588,31 +616,6 @@ function sendUnitFromInput() {
   cmdUnit(!!(sel && sel.value === 'mi'));
 }
 
-// --------------------------- diagnostics ---------------------------
-async function scanAllDevicesDiagnostic() {
-  if (!navigator.bluetooth) { log('Web Bluetooth not available.', 'log-err'); return; }
-  let dev = null;
-  try {
-    log('DIAG: showing ALL Bluetooth devices. Pick your scooter.', 'log-ok');
-    dev = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: OPTIONAL_SERVICES });
-  } catch (e) { log('DIAG cancelled: ' + e, 'log-err'); return; }
-  log('DIAG selected: name="' + (dev.name || '(no name)') + '"  id=' + wrap(dev.id));
-  try {
-    log('DIAG: connecting to read the GATT services ...');
-    const srv = await dev.gatt.connect();
-    let svcs = [];
-    try { svcs = await srv.getPrimaryServices(); } catch (e) { log('DIAG getPrimaryServices error: ' + e, 'log-err'); }
-    if (!svcs || !svcs.length) log('DIAG: no services listed. On Android use nRF Connect for the full picture.', 'log-err');
-    for (const s of svcs) {
-      log('DIAG service ' + s.uuid, 'log-ok');
-      try { const chs = await s.getCharacteristics(); for (const c of chs) log('DIAG   char ' + c.uuid + '  [' + charProps(c) + ']'); }
-      catch (e) { log('DIAG   (characteristics unreadable: ' + e + ')'); }
-    }
-    try { dev.gatt.disconnect(); } catch (e) {}
-    log('DIAG done. Copy the log and send it.', 'log-ok');
-  } catch (e) { log('DIAG connect failed: ' + e, 'log-err'); }
-}
-
 // --------------------------- language ---------------------------
 let lang = 'de';
 function table() { return (window.I18N && window.I18N[lang]) || {}; }
@@ -641,7 +644,7 @@ function initLangSwitch() {
 function applyTheme(dark) {
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
   const b = $('btn-theme');
-  if (b) { b.innerHTML = dark ? '&#9728;' : '&#9790;'; b.setAttribute('aria-label', t(dark ? 'themeToLight' : 'themeToDark')); b.title = b.getAttribute('aria-label'); }   // scan-ok: constant HTML-entity glyphs (sun/moon), no user input
+  if (b) { b.textContent = dark ? '\u2600' : '\u263E'; b.setAttribute('aria-label', t(dark ? 'themeToLight' : 'themeToDark')); b.title = b.getAttribute('aria-label'); }
   try { localStorage.setItem(LS_THEME, dark ? 'dark' : 'light'); } catch (e) {}
 }
 function initTheme() {
@@ -811,7 +814,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   applyLang();
-  printDiagnostics();
+  logDiagnosticHeader();
 
   $('btn-conn').addEventListener('click', () => { if ($('btn-conn').dataset.act === 'disconnect') disconnectBle(); else pickAndConnect(); });
   { const sel = $('model-in'); if (sel) sel.addEventListener('change', () => setModel(sel.value)); }
@@ -828,7 +831,6 @@ window.addEventListener('DOMContentLoaded', () => {
   { const b = $('btn-copy-log'); if (b) b.addEventListener('click', copyLog); }
   { const b = $('btn-clear-log'); if (b) b.addEventListener('click', clearLog); }
   { const b = $('btn-save-log'); if (b) b.addEventListener('click', saveLog); }
-  { const b = $('btn-diag'); if (b) b.addEventListener('click', scanAllDevicesDiagnostic); }
 
   setControlsEnabled(false);
   updateEncState();

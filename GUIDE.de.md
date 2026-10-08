@@ -8,6 +8,8 @@
 > schreibt, ist der Refresh-Heartbeat (foc_k_cmd=16), ein reiner Anstoß zum Nachliefern der
 > Telemetrie. Tuning ist bewusst deaktiviert (Gründe in Abschnitt 8).
 
+> **Wichtig für Fehler-Reports:** Schalte unten auf der Seite den **Diagnose-Log** ein, *bevor* du dich mit dem Scooter verbindest. Nur dann wird der komplette Verbindungsaufbau mitgeschnitten - und genau diese Zeilen brauchen wir in einem [Ticket](https://github.com/Laufbursche42/Laufbursche42/issues), um ein Problem nachzuvollziehen.
+
 ## 1. Was du brauchst
 
 Alles passiert im Browser über Web Bluetooth: Modell wählen, Schlüssel eintragen, verbinden, Werte
