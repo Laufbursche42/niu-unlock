@@ -16,7 +16,7 @@
 
 'use strict';
 
-const BUILD = 'v11';   // logged on load so a tester's log reveals which deployed build is running
+const BUILD = 'v12';   // logged on load so a tester's log reveals which deployed build is running
 const N = window.NIU;
 
 // --------------------------- GATT constants ---------------------------
@@ -805,13 +805,15 @@ window.addEventListener('DOMContentLoaded', () => {
     let saved = '1'; try { const v = localStorage.getItem(LS_PUBLOG); if (v != null) saved = v; } catch (e) {}
     state.publicLog = saved !== '0';
     pubCb.checked = state.publicLog;
-    pubCb.addEventListener('change', () => { state.publicLog = pubCb.checked; try { localStorage.setItem(LS_PUBLOG, pubCb.checked ? '1' : '0'); } catch (e) {} renderLog(); });
+    pubCb.addEventListener('change', () => { state.publicLog = pubCb.checked; try { localStorage.setItem(LS_PUBLOG, pubCb.checked ? '1' : '0'); } catch (e) {} log('public-log: ' + (pubCb.checked ? 'on (anonymizing device name/id)' : 'off')); renderLog(); });
   }
   const diagCb = $('diag-log');
   if (diagCb) {
     state.diag = false; diagCb.checked = false;
-    diagCb.addEventListener('change', () => { state.diag = diagCb.checked; log(state.diag ? t('diagOn') : t('diagOff'), 'log-rx'); });
+    diagCb.addEventListener('change', () => { state.diag = diagCb.checked; log('diag-log: ' + (diagCb.checked ? 'on' : 'off')); log(state.diag ? t('diagOn') : t('diagOff'), 'log-rx'); });
   }
+  const saCb = $('showall');
+  if (saCb) saCb.addEventListener('change', () => { log('showall: ' + (saCb.checked ? 'on' : 'off')); });
 
   applyLang();
   logDiagnosticHeader();
