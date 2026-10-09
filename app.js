@@ -16,7 +16,7 @@
 
 'use strict';
 
-const BUILD = 'v12';   // logged on load so a tester's log reveals which deployed build is running
+const BUILD = 'v13';   // logged on load so a tester's log reveals which deployed build is running
 const N = window.NIU;
 
 // --------------------------- GATT constants ---------------------------
@@ -189,7 +189,6 @@ const HELP = {
   publiclog: ['publicLogTitle', 'publicLogHelp'],
   diaglog: ['diagLogTitle', 'diagLogHelp'],
   tuning: ['tuningDisabledTitle', 'tuningDisabledHelp'],
-  disclaimer: ['disclaimerTitle', 'disclaimerText'],
 };
 function openHelp(key) {
   const m = HELP[key]; if (!m) return;
@@ -660,6 +659,7 @@ const DOC_LOCALIZED = {
   PRIVACY:    { de: 'PRIVACY.de.md', en: 'PRIVACY.md',   titleKey: 'footPrivacy' },
   LICENSE:    { de: 'LICENSE.de.md', en: 'LICENSE.md',   titleKey: 'footLicense' },
   TRADEMARKS: { de: 'TRADEMARKS.de.md', en: 'TRADEMARKS.md', titleKey: 'footTrademarks' },
+  DISCLAIMER: { de: 'DISCLAIMER.de.md', en: 'DISCLAIMER.md', titleKey: 'footDisclaimer' },
 };
 const DOC_SINGLE = {
   README:   { file: 'README.md', titleKey: 'footReadme' },
@@ -674,6 +674,7 @@ const DOC_TITLES = {
   'PRIVACY.de.md': 'footPrivacy', 'PRIVACY.md': 'footPrivacy',
   'LICENSE.de.md': 'footLicense', 'LICENSE.md': 'footLicense',
   'TRADEMARKS.de.md': 'footTrademarks', 'TRADEMARKS.md': 'footTrademarks',
+  'DISCLAIMER.de.md': 'footDisclaimer', 'DISCLAIMER.md': 'footDisclaimer',
 };
 function docFileForKey(key) {
   if (DOC_LOCALIZED[key]) return DOC_LOCALIZED[key][lang] || DOC_LOCALIZED[key].en;
@@ -764,7 +765,7 @@ function wireDocViewer() {
     const jump = e.target.closest('[data-anchor]');
     if (jump) { e.preventDefault(); const body = $('doc-body'); const target = body && body.querySelector('#' + CSS.escape(jump.getAttribute('data-anchor'))); if (target) body.scrollTop = target.offsetTop - body.offsetTop; return; }
     const disc = e.target.closest('[data-open-disclaimer]');
-    if (disc) { e.preventDefault(); openHelp('disclaimer'); return; }
+    if (disc) { e.preventDefault(); openDocFile(docFileForKey('DISCLAIMER'), '', 'footDisclaimer'); return; }
     const keyed = e.target.closest('[data-doc]');
     if (keyed) {
       e.preventDefault();
@@ -786,7 +787,6 @@ function wireDocViewer() {
 window.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.help-btn').forEach(btn => btn.addEventListener('click', () => openHelp(btn.getAttribute('data-help'))));
   ['help-x', 'help-close'].forEach(id => { const b = $(id); if (b) b.addEventListener('click', closeHelp); });
-  { const b = $('link-disclaimer'); if (b) b.addEventListener('click', e => { e.preventDefault(); openHelp('disclaimer'); }); }
   initLangSwitch();
   initTheme();
   wireDocViewer();
