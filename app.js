@@ -16,7 +16,7 @@
 
 'use strict';
 
-const BUILD = 'v15';   // logged on load so a tester's log reveals which deployed build is running
+const BUILD = 'v16';   // logged on load so a tester's log reveals which deployed build is running
 const N = window.NIU;
 
 // --------------------------- GATT constants ---------------------------
