@@ -8,13 +8,13 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png">
-<link rel="stylesheet" href="styles.css?v=18">
+<link rel="stylesheet" href="styles.css?v=19">
 <!-- Cloudflare Web Analytics --><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "1f2a3915448b4b68b4380423f2be4b09"}'></script><!-- scan-ok: Cloudflare Web Analytics beacon (token starts 1f2a39 ends 4b09); cookieless aggregate page metrics, see PRIVACY -->
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>Laufbursche <span data-t="brandSub"></span></h1>
+    <h1>Laufbursche <span data-t="brandSub">NIU KQi Tool</span></h1>
     <div class="head-right">
       <span class="status" id="status" data-state="disconnected">disconnected</span>
       <div class="head-tools">
@@ -27,149 +27,149 @@
     </div>
   </header>
 
-  <p class="hint infobox" data-t="infoBannerHtml"></p>
+  <p class="hint infobox" data-t="infoBannerHtml">Tuning ist mit dieser Seite nicht möglich.</p>
 
-  <p class="warn" id="bt-note" data-t="btNote" hidden></p>
+  <p class="warn" id="bt-note" data-t="btNote" hidden>Diese Seite braucht Web Bluetooth. Auf dem iPhone geht das nur über die App Bluefy, auf Android oder Desktop über Chrome oder Edge. Safari kann kein Web Bluetooth.</p>
 
   <div class="card">
-    <h2 data-t="s1Title"></h2>
-    <p class="hint" data-t="sub"></p>
-    <p class="hint" data-t="startHintGuide"></p>
-    <p class="warn" data-t="expWarn"></p>
-    <p class="hint" data-t="ownDevice"></p>
+    <h2 data-t="s1Title">So fängst du an</h2>
+    <p class="hint" data-t="sub">Live über Web Bluetooth deinen NIU KQi auslesen: Verbinden, Handshake, dann Telemetrie, Einstellungen und erweiterter Status. Läuft in Bluefy (iOS) oder Chrome (Android/Desktop). Nichts verlässt dein Gerät außer dem Seitenaufruf selbst.</p>
+    <p class="hint" data-t="startHintGuide">Neu hier? In der <a href="#" data-doc="GUIDE">Anleitung</a> steht jeder Schritt.</p>
+    <p class="warn" data-t="expWarn">Machbarkeitsstudie: Diese Seite zeigt, was das Bluetooth-Protokoll eines NIU-E-Scooters technisch möglich macht. Sie ist kein fertiges Produkt. Es gibt keine Gewährleistung. Alles was du hier tust, tust du auf eigenes Risiko. <a href="#" data-open-disclaimer>Haftungsausschluss lesen</a>.</p>
+    <p class="hint" data-t="ownDevice">Nur am eigenen Fahrzeug. Dieses Werkzeug kann - sobald die Sitzung steht - dokumentierte Schreibbefehle senden, die an keinem Fahrzeug verifiziert sind. Die eingetragenen Schlüssel bleiben lokal auf deinem Gerät.</p>
   </div>
 
   <div class="card">
-    <h2 data-t="s2Title"></h2>
+    <h2 data-t="s2Title">Verbindung</h2>
     <div class="set-row">
-      <label data-t="modelLabel"></label>
+      <label data-t="modelLabel">Modell</label>
       <select id="model-in"></select>
     </div>
-    <p class="hint" data-t="modelHint"></p>
-    <p class="hint"><span data-t="encStatePrefix"></span> <b id="enc-state">-</b></p>
+    <p class="hint" data-t="modelHint">Der reale Produkttyp kommt bei NIU vom Server und ist per BLE-Name nicht sicher erkennbar. Wähle deine KQi-Familie deshalb selbst. Sie ist beim Auslesen nur informativ: Sie benennt den Speed-Vorspann (Gen 1 -> 10, Gen 2 / 90-100-200 -> 30), den nur der Schreibpfad nutzt. Dieses Werkzeug sendet ihn nicht.</p>
+    <p class="hint"><span data-t="encStatePrefix">Sitzung:</span> <b id="enc-state">-</b></p>
 
-    <div class="card-head"><h2 data-t="keysTitle"></h2><button type="button" class="help-btn" data-help="keys" aria-label="Info">?</button></div>
-    <p class="hint" data-t="keysHint"></p>
-    <div class="key-row"><label data-t="lblSecret"></label><input id="secret-in" type="text" autocomplete="off" spellcheck="false" placeholder="blePassword"></div>
-    <div class="key-row"><label data-t="lblAes"></label><input id="aes-in" type="text" autocomplete="off" spellcheck="false" placeholder="bleAes"></div>
-    <div class="key-row"><label data-t="lblMac"></label><input id="mac-in" type="text" autocomplete="off" spellcheck="false" placeholder="AA:BB:CC:DD:EE:FF"></div>
-    <p class="hint" data-t="macNote"></p>
+    <div class="card-head"><h2 data-t="keysTitle">Geräte-Schlüssel</h2><button type="button" class="help-btn" data-help="keys" aria-label="Info">?</button></div>
+    <p class="hint" data-t="keysHint">NIU verschlüsselt den gesamten BLE-Verkehr mit AES-128. Ohne die Schlüssel läuft der Handshake nicht und die Telemetrie lässt sich nicht entschlüsseln. Die Schlüssel liegen pro Fahrzeug auf dem NIU-Server und werden von der App nach dem Login geladen (Endpunkt v5/ble/bleinfo, Felder blePassword und bleAes). Sie lassen sich NICHT aus MAC oder Seriennummer berechnen und können darum nicht im Tool stehen. Du musst sie selbst eintragen.</p>
+    <div class="key-row"><label data-t="lblSecret">secret (blePassword, 16 Zeichen oder 32 Hex)</label><input id="secret-in" type="text" autocomplete="off" spellcheck="false" placeholder="blePassword"></div>
+    <div class="key-row"><label data-t="lblAes">aesSecret (bleAes, 16 Zeichen oder 32 Hex)</label><input id="aes-in" type="text" autocomplete="off" spellcheck="false" placeholder="bleAes"></div>
+    <div class="key-row"><label data-t="lblMac">MAC (AA:BB:CC:DD:EE:FF)</label><input id="mac-in" type="text" autocomplete="off" spellcheck="false" placeholder="AA:BB:CC:DD:EE:FF"></div>
+    <p class="hint" data-t="macNote">Web Bluetooth zeigt die MAC aus Datenschutzgründen nicht an. Trage sie von Hand ein (steht in der NIU-App unter Geräteinfo oder auf dem Aufkleber).</p>
 
     <div class="log-opt">
-      <span data-t="showallLabel"></span>
+      <span data-t="showallLabel">Alle Geräte anzeigen</span>
       <input type="checkbox" id="showall">
     </div>
     <div class="btns">
       <button class="primary span2" id="btn-conn"></button>
     </div>
     <p class="hint" id="devinfo"></p>
-    <p class="hint" data-t="controlsHint"></p>
+    <p class="hint" data-t="controlsHint">Nach dem Verbinden läuft der Handshake (verifyPwd1/verifyPwd2). Erst wenn die Sitzung steht, liefert der Scooter entschlüsselbare Telemetrie.</p>
   </div>
 
   <div class="card" id="live-card" hidden>
-    <h2 data-t="liveTitle"></h2>
+    <h2 data-t="liveTitle">Live-Werte vom Scooter</h2>
     <div class="grid">
-      <div class="tile"><b id="t-speed">-</b><small data-t="tileSpeed"></small></div>
-      <div class="tile"><b id="t-gear">-</b><small data-t="tileGear"></small></div>
-      <div class="tile"><b id="t-max">-</b><small data-t="tileMax"></small></div>
-      <div class="tile"><b id="t-maxrated">-</b><small data-t="tileMaxRated"></small></div>
-      <div class="tile"><b id="t-mode">-</b><small data-t="tileMode"></small></div>
-      <div class="tile"><b id="t-err">-</b><small data-t="tileErr"></small></div>
-      <div class="tile"><b id="t-status">-</b><small data-t="tileStatus"></small></div>
+      <div class="tile"><b id="t-speed">-</b><small data-t="tileSpeed">Geschwindigkeit</small></div>
+      <div class="tile"><b id="t-gear">-</b><small data-t="tileGear">Gang</small></div>
+      <div class="tile"><b id="t-max">-</b><small data-t="tileMax">Max-Speed gesetzt</small></div>
+      <div class="tile"><b id="t-maxrated">-</b><small data-t="tileMaxRated">Max-Speed werksseitig</small></div>
+      <div class="tile"><b id="t-mode">-</b><small data-t="tileMode">Beschl.-Modus (roh)</small></div>
+      <div class="tile"><b id="t-err">-</b><small data-t="tileErr">Fehler</small></div>
+      <div class="tile"><b id="t-status">-</b><small data-t="tileStatus">Statuswort</small></div>
     </div>
     <div class="btns">
-      <button type="button" class="span2" id="btn-heartbeat" disabled data-t="btnHeartbeat"></button>
+      <button type="button" class="span2" id="btn-heartbeat" disabled data-t="btnHeartbeat">Live-Werte anfordern (Heartbeat)</button>
     </div>
-    <p class="hint" data-t="liveHint"></p>
+    <p class="hint" data-t="liveHint">Die Live-Werte kommen direkt vom Scooter und werden bestmöglich aus den Notifications dekodiert. Nicht jedes Feld ist belegt, dann steht dort ein Strich. Der Heartbeat (foc_k_cmd=16) stößt nur eine Aktualisierung an und ändert keine Einstellung. Skalierungen (z. B. Speed /10) sind aus der App abgeleitet und am Gerät zu bestätigen. Die rohen Meldungen stehen als Hex im Log.</p>
   </div>
 
   <div class="card" id="batt-card" hidden>
-    <div class="card-head"><h2 data-t="battTitle"></h2><button type="button" class="help-btn" data-help="batt" aria-label="Info">?</button></div>
+    <div class="card-head"><h2 data-t="battTitle">Akku-Telemetrie</h2><button type="button" class="help-btn" data-help="batt" aria-label="Info">?</button></div>
     <div class="grid">
-      <div class="tile"><b id="t-range">-</b><small data-t="tileRange"></small></div>
+      <div class="tile"><b id="t-range">-</b><small data-t="tileRange">Restreichweite</small></div>
     </div>
-    <p class="hint" data-t="battHint"></p>
+    <p class="hint" data-t="battHint">Restreichweite und Akkuwerte, soweit der Scooter sie meldet. Nicht jedes Feld ist belegt, dann steht dort ein Strich. Die Reichweite kommt roh aus der Notification, ihre Einheit ist am Fahrzeug zu bestätigen.</p>
   </div>
 
   <div class="card" id="more-card" hidden>
-    <div class="card-head"><h2 data-t="moreTitle"></h2><button type="button" class="help-btn" data-help="tuning" aria-label="Info">?</button></div>
+    <div class="card-head"><h2 data-t="moreTitle">Einstellungen</h2><button type="button" class="help-btn" data-help="tuning" aria-label="Info">?</button></div>
 
-    <h3 class="set-group" data-t="setgrpSpeed"></h3>
-    <p class="warn bad" data-t="tuningReason"></p>
-    <p class="warn bad" data-t="tuningLegal"></p>
+    <h3 class="set-group" data-t="setgrpSpeed">Tempo und Freischaltung</h3>
+    <p class="warn bad" data-t="tuningReason">ACHTUNG: Diese Steuerungen senden echte, aus der App rekonstruierte Schreibbefehle an den Controller - an keinem Fahrzeug verifiziert und ohne Gewährleistung. Reine Machbarkeitsstudie. Erst nutzbar, wenn die Sitzung steht.</p>
+    <p class="warn bad" data-t="tuningLegal">Rechtlicher Hinweis: Das Anheben der Höchstgeschwindigkeit lässt die ABE / Betriebserlaubnis erlöschen; die Nutzung im öffentlichen Verkehr ist dann illegal. Nur am eigenen Fahrzeug, auf Privatgelände und auf eigenes Risiko.</p>
     <div class="set-row">
-      <label data-t="lblSpeedLimit"></label>
+      <label data-t="lblSpeedLimit">Speed-Limit (foc_k_def_max_speed 21003C, km/h)</label>
       <input type="number" id="speed-in" step="0.1" min="1" max="99" value="22">
-      <button type="button" id="btn-speed" data-t="btnSend" data-ready-only disabled></button>
+      <button type="button" id="btn-speed" data-t="btnSend" data-ready-only disabled>Senden</button>
     </div>
-    <p class="hint gate-reason" data-t="reasonFirmwareCap"></p>
+    <p class="hint gate-reason" data-t="reasonFirmwareCap">Hinweis: Der reale Speed-Deckel sitzt in der region-gebundenen FOC-Firmware. Per BLE gesetzte Werte werden davon begrenzt und heben den echten Deckel nicht an.</p>
     <div class="toggle-row">
-      <label data-t="lblKick"></label>
-      <button type="button" class="on" id="kick-on" data-t="btnOn" data-ready-only disabled></button>
-      <button type="button" class="off" id="kick-off" data-t="btnOff" data-ready-only disabled></button>
-    </div>
-    <div class="toggle-row">
-      <label data-t="lblCruise"></label>
-      <button type="button" class="on" id="cruise-on" data-t="btnOn" data-ready-only disabled></button>
-      <button type="button" class="off" id="cruise-off" data-t="btnOff" data-ready-only disabled></button>
+      <label data-t="lblKick">Kickstart / Zero-Launch</label>
+      <button type="button" class="on" id="kick-on" data-t="btnOn" data-ready-only disabled>An</button>
+      <button type="button" class="off" id="kick-off" data-t="btnOff" data-ready-only disabled>Aus</button>
     </div>
     <div class="toggle-row">
-      <label data-t="lblFastlock"></label>
-      <button type="button" class="on" id="fastlock-on" data-t="btnOn" data-ready-only disabled></button>
-      <button type="button" class="off" id="fastlock-off" data-t="btnOff" data-ready-only disabled></button>
+      <label data-t="lblCruise">Tempomat / Cruise</label>
+      <button type="button" class="on" id="cruise-on" data-t="btnOn" data-ready-only disabled>An</button>
+      <button type="button" class="off" id="cruise-off" data-t="btnOff" data-ready-only disabled>Aus</button>
     </div>
-    <p class="hint gate-reason" data-t="reasonUnverified"></p>
+    <div class="toggle-row">
+      <label data-t="lblFastlock">Fast-Lock</label>
+      <button type="button" class="on" id="fastlock-on" data-t="btnOn" data-ready-only disabled>An</button>
+      <button type="button" class="off" id="fastlock-off" data-t="btnOff" data-ready-only disabled>Aus</button>
+    </div>
+    <p class="hint gate-reason" data-t="reasonUnverified">Schreibpfad nur aus der App rekonstruiert, an keinem Fahrzeug verifiziert. Die Fast-Lock-Wirkung ist nur aus dem Namen erschlossen (unbestätigt). Byte-Details in PROTOCOL.md.</p>
 
-    <h3 class="set-group" data-t="setgrpGeneral"></h3>
+    <h3 class="set-group" data-t="setgrpGeneral">Allgemein</h3>
     <div class="set-row">
-      <label data-t="lblUnit"></label>
-      <select id="unit-in"><option value="km" data-t="optKm"></option><option value="mi" data-t="optMi"></option></select>
-      <button type="button" id="btn-unit" data-t="btnSend" data-ready-only disabled></button>
+      <label data-t="lblUnit">Anzeige-Einheit</label>
+      <select id="unit-in"><option value="km" data-t="optKm">km/h</option><option value="mi" data-t="optMi">mph</option></select>
+      <button type="button" id="btn-unit" data-t="btnSend" data-ready-only disabled>Senden</button>
     </div>
     <table class="kv"><tbody id="set-body"></tbody></table>
-    <p class="hint" data-t="setHint"></p>
+    <p class="hint" data-t="setHint">Werte aus dem zuletzt dekodierten Frame. Nur Anzeige, kein Schreiben. Was hier nicht belegt ist, bleibt ein Strich oder steht als "unbekannt".</p>
   </div>
 
   <div class="card" id="raw-card" hidden>
-    <h2 data-t="advTitle"></h2>
+    <h2 data-t="advTitle">Erweitert (nur lesen)</h2>
     <table class="kv"><tbody id="adv-body"></tbody></table>
-    <p class="hint" data-t="advHint"></p>
+    <p class="hint" data-t="advHint">Rohe Statuswörter und Diagnosewerte. Die Bit-Bedeutungen der Statuswörter sind nicht belegt (OFFEN), darum wird nur das rohe U32-Wort in Hex gezeigt, nie erfundene Einzel-Flags. Die Controller-Software-Version wird als Zeichenkette gelesen. Eine Firmware-Version des BLE-Moduls ist per Protokoll nicht auslesbar.</p>
   </div>
 
   <div class="card">
-    <h2 data-t="s6Title"></h2>
+    <h2 data-t="s6Title">Protokoll-Log</h2>
     <div class="log-opts">
       <div class="log-opt">
-        <span data-t="publicLogLabel"></span>
+        <span data-t="publicLogLabel">Öffentliches Log (Gerätename/ID anonymisieren)</span>
         <input type="checkbox" id="public-log" checked>
         <button type="button" class="help-btn" data-help="publiclog" aria-label="Info">?</button>
       </div>
       <div class="log-opt">
-        <span data-t="diagLogLabel"></span>
+        <span data-t="diagLogLabel">Diagnose-Log</span>
         <input type="checkbox" id="diag-log">
         <button type="button" class="help-btn" data-help="diaglog" aria-label="Info">?</button>
       </div>
     </div>
     <div class="btns">
-      <button type="button" id="btn-copy-log" data-t="btnCopyLog"></button>
-      <button type="button" id="btn-clear-log" data-t="btnClearLog"></button>
-      <button type="button" id="btn-save-log" class="span2" data-t="btnSaveLog"></button>
+      <button type="button" id="btn-copy-log" data-t="btnCopyLog">Kopieren</button>
+      <button type="button" id="btn-clear-log" data-t="btnClearLog">Leeren</button>
+      <button type="button" id="btn-save-log" class="span2" data-t="btnSaveLog">Speichern</button>
     </div>
     <pre id="log"></pre>
-    <p class="hint"><span class="log-tx" data-t="logTxLegend"></span>, <span class="log-rx" data-t="logRxLegend"></span></p>
+    <p class="hint"><span class="log-tx" data-t="logTxLegend">gesendet</span>, <span class="log-rx" data-t="logRxLegend">empfangen</span></p>
   </div>
 
   <footer class="foot">
     <span class="foot-links">
-      <a id="link-guide" href="GUIDE.de.md" data-doc="GUIDE" data-t="footGuide"></a>
-      <a href="https://github.com/Laufbursche42/niu-unlock" target="_blank" rel="noopener" data-t="footSource"></a>
-      <a id="link-readme" href="README.md" data-doc="README" data-t="footReadme"></a>
-      <a id="link-disclaimer" href="DISCLAIMER.de.md" data-doc="DISCLAIMER" data-t="footDisclaimer"></a>
-      <a id="link-license" href="LICENSE.de.md" data-doc="LICENSE" data-t="footLicense"></a>
-      <a id="link-privacy" href="PRIVACY.de.md" data-doc="PRIVACY" data-t="footPrivacy"></a>
-      <a id="link-trademarks" href="TRADEMARKS.de.md" data-doc="TRADEMARKS" data-t="footTrademarks"></a>
+      <a id="link-guide" href="GUIDE.de.md" data-doc="GUIDE" data-t="footGuide">Anleitung</a>
+      <a href="https://github.com/Laufbursche42/niu-unlock" target="_blank" rel="noopener" data-t="footSource">Quellcode</a>
+      <a id="link-readme" href="README.md" data-doc="README" data-t="footReadme">Readme</a>
+      <a id="link-disclaimer" href="DISCLAIMER.de.md" data-doc="DISCLAIMER" data-t="footDisclaimer">Haftungsausschluss</a>
+      <a id="link-license" href="LICENSE.de.md" data-doc="LICENSE" data-t="footLicense">Lizenz</a>
+      <a id="link-privacy" href="PRIVACY.de.md" data-doc="PRIVACY" data-t="footPrivacy">Datenschutz</a>
+      <a id="link-trademarks" href="TRADEMARKS.de.md" data-doc="TRADEMARKS" data-t="footTrademarks">Marken</a>
     </span>
-    <span class="foot-links"><span class="ver" id="build-ver"></span><a href="https://github.com/Laufbursche42/Laufbursche42/issues" target="_blank" rel="noopener" data-t="footIssue"></a></span>
+    <span class="foot-links"><span class="ver" id="build-ver"></span><a href="https://github.com/Laufbursche42/Laufbursche42/issues" target="_blank" rel="noopener" data-t="footIssue">Fehler melden</a></span>
     <a class="foot-copy" href="https://laufbursche42.github.io/Laufbursche42/" target="_blank" rel="noopener">Copyright (c) 2026 Laufbursche</a>
   </footer>
 </div>
@@ -181,7 +181,7 @@
   </div>
   <div class="doc-body" id="doc-body"></div>
   <div class="doc-foot">
-    <button type="button" id="doc-close" data-t="docClose"></button>
+    <button type="button" id="doc-close" data-t="docClose">Schließen</button>
   </div>
 </dialog>
 
@@ -192,25 +192,25 @@
   </div>
   <div class="doc-body"><p id="help-body"></p></div>
   <div class="doc-foot">
-    <button type="button" id="help-close" data-t="docClose"></button>
+    <button type="button" id="help-close" data-t="docClose">Schließen</button>
   </div>
 </dialog>
 
 <dialog id="confirm" aria-labelledby="confirm-title">
   <div class="doc-head">
-    <h3 id="confirm-title" data-t="confirmTitle"></h3>
+    <h3 id="confirm-title" data-t="confirmTitle">Bitte bestätigen</h3>
     <button type="button" id="confirm-x">&times;</button>
   </div>
   <div class="doc-body"><p id="confirm-body"></p></div>
   <div class="doc-foot">
-    <button type="button" id="confirm-no" data-t="confirmCancel"></button>
-    <button type="button" id="confirm-ok" class="primary" data-t="confirmOk"></button>
+    <button type="button" id="confirm-no" data-t="confirmCancel">Abbrechen</button>
+    <button type="button" id="confirm-ok" class="primary" data-t="confirmOk">Bestätigen</button>
   </div>
 </dialog>
 
-<script src="aes.js?v=18"></script>
-<script src="report-footer.js?v=18"></script>
-<script src="i18n.js?v=18"></script>
-<script src="app.js?v=18"></script>
+<script src="aes.js?v=19"></script>
+<script src="report-footer.js?v=19"></script>
+<script src="i18n.js?v=19"></script>
+<script src="app.js?v=19"></script>
 </body>
 </html>
